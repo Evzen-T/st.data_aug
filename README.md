@@ -10,6 +10,12 @@ pip install streamlit
 pip install opencv
 ```
 
+## How to run?
+
+```
+streamlit run 1_About_st.data-aug.py
+```
+
 ## Features
 **<details><summary>Grayscale images</summary>**
 1. Input image file path
