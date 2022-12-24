@@ -101,7 +101,7 @@ with kpi2:
         show_img_2 = demo_img
         st.image(show_img_2)
     else:
-        img_slider_2 = st.slider("Choose Flipped image", 0, img_len_2-1 , 1)
+        img_slider_2 = st.slider("Choose flipped image", 0, img_len_2-1 , 1)
         img_name_2 = imglist_2[img_slider_2]
         show_img_2 = dpath + '/' + str(img_name_2)
         st.image(show_img_2)
