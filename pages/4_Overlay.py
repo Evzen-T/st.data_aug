@@ -1,16 +1,12 @@
 import cv2
 import streamlit as st
 
-<<<<<<< HEAD
-demo_img = './media/overlayed_demo.jpg'
-=======
 import random
 import os,glob
 from os.path import isfile,join
 from os import listdir,makedirs
 
-demo_img = './media/grayed_demo.jpg'
->>>>>>> 99e4db7b615412a2ec24ed2144755f596863915f
+demo_img = './media/overlayed_demo.jpg'
 st.subheader("**Overlay images**")
 st.image(demo_img)
 st.caption("Demo overlayed image ^")
@@ -76,52 +72,13 @@ if overlay:
 
 kpi1, kpi2 = st.columns(2)
 with kpi1:
-<<<<<<< HEAD
-    backgrd_img = st.text_input("Insert background image", './images/original/og_demo_1.jpg')
-=======
-    for f in fpath:
-        imglist_3 = listdir(fpath)
-        img_len_3 = len(imglist_3)
-    if img_len_3 == 0:
-        show_img = demo_img
-        st.image(show_img)
-    else:
-        img_slider_3 = st.slider("Original image", 0, img_len_3-1 , 1)
-        img_name_3 = imglist_3[img_slider_3]
-        show_img_3 = fpath + '/' + str(img_name_3)
-        st.image(show_img_3)
->>>>>>> 99e4db7b615412a2ec24ed2144755f596863915f
+    backgrd_img = st.text_input("Insert background image", './images/overlay/original/og_demo_2.jpg')
     st.image(backgrd_img)
 
 with kpi2:
-<<<<<<< HEAD
-    overlaying_img = st.text_input("Insert overlaying image", "./images/original/og_demo_3.jpg")
+    overlaying_img = st.text_input("Insert overlaying image", "./images/overlay/original/og_demo_1.jpg")
     st.image(overlaying_img)
     ylocation = st.number_input("Insert top left y coordinates", min_value=0, max_value=max_height, value=100, step=10)
-
-if 'count' not in st.session_state:
-    st.session_state.count = 0
-def increment_counter():
-    st.session_state.count += 1
-
-previous = 0
-overlay = st.button("Overlay Images", on_click=increment_counter)
-
-if overlay and st.session_state.count > previous:
-    img1 = cv2.imread(backgrd_img, cv2.IMREAD_COLOR)
-    img2 = cv2.imread(overlaying_img, cv2.IMREAD_COLOR)
-    overlayed = image_overlay(img1, img2, location=(int(xlocation),int(ylocation)))
-    overlayed_rgb = cv2.cvtColor(overlayed, cv2.COLOR_BGR2RGB)
-    st.image(overlayed_rgb)
-
-    filename='./images/overlay/augmented/overlayed_{}.jpg'.format(st.session_state.count)
-    cv2.imwrite(filename, overlayed)
-    st.success("Image successfully saved")
-    previous = st.session_state.count
-=======
-    for d in dpath:
-        imglist_2 = listdir(dpath)
-        img_len_2 = len(imglist_2)
 
     if img_len_2 == 0:
         show_img_2 = demo_img
@@ -135,4 +92,3 @@ if overlay and st.session_state.count > previous:
         img_name_2 = imglist_2[img_slider_2]
         show_img_2 = dpath + '/' + str(img_name_2)
         st.image(show_img_2)
->>>>>>> 99e4db7b615412a2ec24ed2144755f596863915f
