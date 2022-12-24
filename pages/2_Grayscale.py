@@ -12,7 +12,7 @@ st.caption("Demo grayscale image ^")
 kpi1, kpi2 = st.columns(2)
 
 with kpi1:
-    fpath = st.text_input("Input file path to images", "./images/gray/original")
+    fpath = st.text_input("Input file path to images", "./images/original")
     for f in fpath:
         imglist_1 = listdir(fpath)
         img_len_1 = len(imglist_1)
@@ -21,13 +21,13 @@ with kpi1:
         show_img = demo_img
         st.image(show_img)
     else:
-        img_slider_1 = st.slider("Preview colour image", 0, img_len_1-1 , 1)
+        img_slider_1 = st.slider("Preview original image", 0, img_len_1-1 , 1)
         img_name_1 = imglist_1[img_slider_1]
         show_img_1 = fpath + '/' + str(img_name_1)
         st.image(show_img_1)
 
 with kpi2:
-    dpath = st.text_input("Input destination path", "./images/gray/augmented")
+    dpath = st.text_input("Input destination path", "./images/augmented")
 
 try:
     makedirs(dpath)
@@ -48,7 +48,7 @@ if gray:
     for fil in glob.glob("*.jpg"):
         try:
             image = cv2.imread(fil) 
-            gray_image = cv2.cvtColor(os.path.join(fpath,image), cv2.COLOR_BGR2GRAY) # convert to greyscale
+            gray_image = cv2.cvtColor(os.path.join(fpath,image), cv2.COLOR_BGR2GRAY) # convert to grayscale
             cv2.imwrite(os.path.join(dpath,fil),gray_image)
         except:
             print('{} is not converted')

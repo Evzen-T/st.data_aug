@@ -1,7 +1,7 @@
 import cv2
 import streamlit as st
 
-demo_img = './media/grayed_demo.jpg'
+demo_img = './media/overlayed_demo.jpg'
 st.subheader("**Overlay images**")
 st.image(demo_img)
 st.caption("Demo overlayed image ^")
@@ -15,7 +15,7 @@ def image_overlay(img1, img2, location):
 
 kpi1, kpi2 = st.columns(2)
 with kpi1:
-    backgrd_img = st.text_input("Insert background image", './images/overlay/original/og_demo_2.jpg')
+    backgrd_img = st.text_input("Insert background image", './images/original/og_demo_1.jpg')
     st.image(backgrd_img)
     read = cv2.imread(backgrd_img, cv2.IMREAD_UNCHANGED)
     img_dims = read.shape
@@ -24,7 +24,7 @@ with kpi1:
     xlocation = st.number_input("Insert top left x coordinates", min_value=0, max_value=max_width, value=100, step=10)
 
 with kpi2:
-    overlaying_img = st.text_input("Insert overlaying image", "./images/overlay/original/og_demo_1.jpg")
+    overlaying_img = st.text_input("Insert overlaying image", "./images/original/og_demo_3.jpg")
     st.image(overlaying_img)
     ylocation = st.number_input("Insert top left y coordinates", min_value=0, max_value=max_height, value=100, step=10)
 
