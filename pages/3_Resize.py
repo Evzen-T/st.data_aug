@@ -12,7 +12,7 @@ st.caption("Demo resized image ^")
 kpi1, kpi2 = st.columns(2)
 
 with kpi1:
-    fpath = st.text_input("Input file path to images", "./images/original")
+    fpath = st.text_input("Input file path to images", "./images/demo")
     img_width = st.number_input("Insert image width", max_value=1280, min_value=32, value=640, step=32)
     img_height = st.number_input("Insert image height", max_value=800, min_value=32, value=416, step=32)
     for f in fpath:
@@ -47,13 +47,6 @@ if resize:
             cv2.imwrite(dstPath,resized)
         except:
             print ("{} is not converted".format(image))
-    for fil in glob.glob("*.jpg"):
-        try:
-            image = cv2.imread(fil) 
-            resized_image = cv2.resize(os.path.join(fpath,image), (img_width,img_height)) # resize
-            cv2.imwrite(os.path.join(dpath,fil),resized_image)
-        except:
-            print('{} is not converted')
 
 with kpi2:
     for d in dpath:

@@ -12,7 +12,7 @@ st.caption("Demo grayscale image ^")
 kpi1, kpi2 = st.columns(2)
 
 with kpi1:
-    fpath = st.text_input("Input file path to images", "./images/original")
+    fpath = st.text_input("Input file path to images", "./images/demo")
     for f in fpath:
         imglist_1 = listdir(fpath)
         img_len_1 = len(imglist_1)
@@ -45,13 +45,6 @@ if gray:
             cv2.imwrite(dstPath,gray)
         except:
             print ("{} is not converted".format(image))
-    for fil in glob.glob("*.jpg"):
-        try:
-            image = cv2.imread(fil) 
-            gray_image = cv2.cvtColor(os.path.join(fpath,image), cv2.COLOR_BGR2GRAY) # convert to grayscale
-            cv2.imwrite(os.path.join(dpath,fil),gray_image)
-        except:
-            print('{} is not converted')
 
 with kpi2:
     for d in dpath:

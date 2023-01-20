@@ -13,7 +13,7 @@ st.caption("Demo flipped image ^")
 kpi1, kpi2 = st.columns(2)
 
 with kpi1:
-    fpath = st.text_input("Input file path to images", "./images/original/")
+    fpath = st.text_input("Input file path to images", "./images/demo/")
     for f in fpath:
         imglist_1 = listdir(fpath)
         img_len_1 = len(imglist_1)
@@ -48,13 +48,6 @@ if c_flip == "Flip Horizontally":
                 cv2.imwrite(dstPath,flipping)
             except:
                 print ("{} is not converted".format(image))
-        for fil in glob.glob("*.jpg"):
-            try:
-                image = cv2.imread(fil) 
-                flip_image = cv2.flip(os.path.join(fpath,image), 1) # Flip images
-                cv2.imwrite(os.path.join(dpath,fil),flip_image)
-            except:
-                print('{} is not converted')
 
 if c_flip == "Flip Vertically":
     if flip:
@@ -66,13 +59,6 @@ if c_flip == "Flip Vertically":
                 cv2.imwrite(dstPath,flipping)
             except:
                 print ("{} is not converted".format(image))
-        for fil in glob.glob("*.jpg"):
-            try:
-                image = cv2.imread(fil) 
-                flip_image = cv2.flip(os.path.join(fpath,image), 0) # Flip images
-                cv2.imwrite(os.path.join(dpath,fil),flip_image)
-            except:
-                print('{} is not converted')
 
 if c_flip == "Flip H & V":
     if flip:
@@ -84,13 +70,6 @@ if c_flip == "Flip H & V":
                 cv2.imwrite(dstPath,flipping)
             except:
                 print ("{} is not converted".format(image))
-        for fil in glob.glob("*.jpg"):
-            try:
-                image = cv2.imread(fil) 
-                flip_image = cv2.flip(os.path.join(fpath,image), -1) # Flip images
-                cv2.imwrite(os.path.join(dpath,fil),flip_image)
-            except:
-                print('{} is not converted')
 
 with kpi2:
     for d in dpath:
