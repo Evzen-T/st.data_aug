@@ -3,7 +3,6 @@ import cv2
 import random
 import numpy as np
 import streamlit as st
-from PIL import Image
 
 cd = os.getcwd()
 st.caption('Current Working Directory (CWD)')
@@ -84,10 +83,10 @@ def segmentation(img: np.array, polygon: np.array, alpha: float = 0.7, labels_fi
     cv2.fillPoly(img, pts=[polygon], color=colors[idx])
     cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0, img)
     cv2.putText(img, f'{classes[idx]}', org =(polygon[0][0], polygon[0][1]), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, color=colors[idx], thickness=2)
-    cv2.polylines(img, pts=[polygon], isClosed=True,color=colors[idx],thickness=1, lineType=cv2.LINE_AA)
+    out_img = cv2.polylines(img, pts=[polygon], isClosed=True,color=colors[idx],thickness=1, lineType=cv2.LINE_AA)
     cv2.imwrite(save_path,img)
     txt_file.close()
-    return img
+    return out_img
 
 # def crop_affine(img, centerpt, theta, crop_width, crop_height, scale=1):
     
@@ -118,7 +117,7 @@ if annotate:
 
     for img_names in image_names:
         image, polygon  = norm_img(img_file=img, labels_file=labels, img_name=img_names, normalize=True)
-        image           = segmentation(img=image, polygon=polygon, labels_file=labels, names=img_names, save_dir=save, classes=classes, colors=color_list)
+        out_img         = segmentation(img=image, polygon=polygon, labels_file=labels, names=img_names, save_dir=save, classes=classes, colors=color_list)
         
         # save_path   = os.path.join(save, f'{img_names}.jpg')
         # print(polygon)
@@ -137,6 +136,7 @@ if annotate:
         # center = (960, 640)
         # image = crop_affine(img=image, centerpt=center, theta=70, crop_width=1280, crop_height=800)
         # cv2.imwrite(save_path, image)
+        st.image(out_img)
 
 
 image_names = open(names).read().strip().split()
@@ -145,17 +145,17 @@ with kpi1:
     prev_img = st.button(':arrow_backward: Prev', on_click=decrement_counter)
 
 with kpi2:
-    st.caption(f'image {curr}')
+    st.caption(f'image {st.session_state.count}')
 with kpi3:
     next_img = st.button('Next :arrow_forward:', on_click=increment_counter)
 
-if prev_img and st.session_state.count < curr:
+if prev_img and st.session_state.count > 0:
     img_name = f'{save}/{str(image_names[st.session_state.count])}.jpg'
     img_name_2 = cv2.imread(img_name)
     st.image(img_name_2)
     curr = st.session_state.count
 
-elif next_img and st.session_state.count > curr:
+elif next_img:
     img_name = f'{save}/{image_names[st.session_state.count]}.jpg'
     img_name_2 = cv2.imread(img_name)
     st.image(img_name_2)
