@@ -89,18 +89,18 @@ def segmentation(img: np.array, polygon: np.array, alpha: float = 0.7, labels_fi
     txt_file.close()
     return img
 
-def crop_affine(img, centerpt, theta, crop_width, crop_height, scale=1):
+# def crop_affine(img, centerpt, theta, crop_width, crop_height, scale=1):
     
 
-    shape   = (img.shape[1], img.shape[0])
-    matrix  = cv2.getRotationMatrix2D(center=centerpt, angle=theta, scale=scale)
-    out_img = cv2.warpAffine(src=img, M=matrix, dsize=shape)
+#     shape   = (img.shape[1], img.shape[0])
+#     matrix  = cv2.getRotationMatrix2D(center=centerpt, angle=theta, scale=scale)
+#     out_img = cv2.warpAffine(src=img, M=matrix, dsize=shape)
 
-    x       = int(centerpt[0]-crop_width/2)
-    y       = int(centerpt[1]-crop_height/2)
-    out_img = out_img[y:y+crop_height, x:x+crop_width]
+#     x       = int(centerpt[0]-crop_width/2)
+#     y       = int(centerpt[1]-crop_height/2)
+#     out_img = out_img[y:y+crop_height, x:x+crop_width]
 
-    return out_img
+#     return out_img
 
 annotate = st.button('Polygon segmentation')
 if annotate:
