@@ -3,19 +3,21 @@ import cv2
 import random
 import numpy as np
 import streamlit as st
+from PIL import Image
 
 cd = os.getcwd()
 st.caption('Current Working Directory (CWD)')
 st.code(cd)
 
-img     = st.text_input('Insert image filepath',f'{cd}/dataset/images')
-p_dir   = os.path.dirname(img)
-labels  = f'{p_dir}/labels'
-save    = f'{p_dir}/saved'
-data    = f'{p_dir}/data.txt'
-names   = f'{p_dir}/names.txt'
-curr    = 0
-stframe = st.empty()
+img         = st.text_input('Insert image filepath',f'{cd}/dataset/images')
+dir         = os.path.dirname(img)
+labels      = f'{dir}/labels'
+save        = f'{dir}/saved'
+save_seg    = f'{dir}/saved_seg'
+data        = f'{dir}/data.txt'
+names       = f'{dir}/names.txt'
+curr        = 0
+stframe     = st.empty()
 
 if 'count' not in st.session_state:
     st.session_state.count = 0
@@ -62,7 +64,7 @@ def norm_img(img_file: str, labels_file: str, img_name: str, normalize: bool = F
     return image, polygon.astype(np.int32)
     
 
-def segmentation(img: np.array, polygon: np.array, alpha: float = 0.7, labels_file=None, names=None, save_dir=None, classes=None, colors=None):
+def segmentation(img, polygon, alpha: float = 0.7, labels_file=None, names=None, save_dir=None, classes=None, colors=None):
     #Path
     txt_path    = os.path.join(labels_file, f'{names}.txt')
     save_path   = os.path.join(save_dir, f'{names}.jpg')
@@ -83,23 +85,25 @@ def segmentation(img: np.array, polygon: np.array, alpha: float = 0.7, labels_fi
     cv2.fillPoly(img, pts=[polygon], color=colors[idx])
     cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0, img)
     cv2.putText(img, f'{classes[idx]}', org =(polygon[0][0], polygon[0][1]), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, color=colors[idx], thickness=2)
-    out_img = cv2.polylines(img, pts=[polygon], isClosed=True,color=colors[idx],thickness=1, lineType=cv2.LINE_AA)
+    Ann_img  = cv2.polylines(img, pts=[polygon], isClosed=True,color=colors[idx],thickness=1, lineType=cv2.LINE_AA)
     cv2.imwrite(save_path,img)
     txt_file.close()
-    return out_img
+    return Ann_img
 
-# def crop_affine(img, centerpt, theta, crop_width, crop_height, scale=1):
+def crop_seg(pts, save_dir, names):
+    #Path
+    save_path = os.path.join(save_dir, f'{names}.jpg')
     
+    #Array pts
+    arr_poly = np.array(pts)
 
-#     shape   = (img.shape[1], img.shape[0])
-#     matrix  = cv2.getRotationMatrix2D(center=centerpt, angle=theta, scale=scale)
-#     out_img = cv2.warpAffine(src=img, M=matrix, dsize=shape)
-
-#     x       = int(centerpt[0]-crop_width/2)
-#     y       = int(centerpt[1]-crop_height/2)
-#     out_img = out_img[y:y+crop_height, x:x+crop_width]
-
-#     return out_img
+    ## (1) Crop the bounding rect
+    rect = cv2.boundingRect(arr_poly)
+    x,y,w,h = rect
+    crop_img = image[y:y+h, x:x+w].copy()
+    
+    cv2.imwrite(save_path, crop_img)
+    return crop_img
 
 annotate = st.button('Polygon segmentation')
 if annotate:
@@ -117,46 +121,54 @@ if annotate:
 
     for img_names in image_names:
         image, polygon  = norm_img(img_file=img, labels_file=labels, img_name=img_names, normalize=True)
-        out_img         = segmentation(img=image, polygon=polygon, labels_file=labels, names=img_names, save_dir=save, classes=classes, colors=color_list)
-        
-        # save_path   = os.path.join(save, f'{img_names}.jpg')
-        # print(polygon)
-        # top_left        = str[polygon[0][0],polygon[0][1]]
-        # top_right       = str[polygon[1][0],polygon[1][1]]
-        # bottom_right    = str[polygon[2][0],polygon[2][1]]
-        # bottom_left     = str[polygon[3][0],polygon[3][1]]
-        # perspec_in = np.array([top_left, top_right, bottom_right, bottom_left])
-        # perspec_out = np.float32([[0,0], [1280,0], [0,1920], [1280,1920]])
-        # # Apply Perspective Transform Algorithm
-        # matrix = cv2.getPerspectiveTransform(perspec_in, perspec_out)
-        # result = cv2.warpPerspective(image, matrix, (1280, 1920))
-        # cv2.imwrite(save_path,image)
+        crop_img        = crop_seg(pts=polygon, save_dir=save, names=img_names)
+        Ann_img         = segmentation(img=image, polygon=polygon, labels_file=labels, names=img_names, save_dir=save_seg, classes=classes, colors=color_list)
 
-        
-        # center = (960, 640)
-        # image = crop_affine(img=image, centerpt=center, theta=70, crop_width=1280, crop_height=800)
-        # cv2.imwrite(save_path, image)
-        st.image(out_img)
-
-
+st.markdown('---')
 image_names = open(names).read().strip().split()
-kpi1, kpi2, kpi3 = st.columns(3)
+kpi1, kpi2, kpi3= st.columns(3)
 with kpi1:
     prev_img = st.button(':arrow_backward: Prev', on_click=decrement_counter)
 
 with kpi2:
-    st.caption(f'image {st.session_state.count}')
+    chosen = st.selectbox('Select save files', ['save', 'save_seg'])
+    
+
 with kpi3:
     next_img = st.button('Next :arrow_forward:', on_click=increment_counter)
 
-if prev_img and st.session_state.count > 0:
-    img_name = f'{save}/{str(image_names[st.session_state.count])}.jpg'
-    img_name_2 = cv2.imread(img_name)
-    st.image(img_name_2)
-    curr = st.session_state.count
+if chosen == 'save':
+    if prev_img and st.session_state.count > 0:
+        img_name = f'{save}/{str(image_names[st.session_state.count])}.jpg'
+        img_name_2 = cv2.imread(img_name)
+        st.image(img_name_2)
+        st.caption(f'image {st.session_state.count}')
+        curr = st.session_state.count
 
-elif next_img:
-    img_name = f'{save}/{image_names[st.session_state.count]}.jpg'
-    img_name_2 = cv2.imread(img_name)
-    st.image(img_name_2)
-    curr = st.session_state.count
+    elif next_img and st.session_state.count <= len(os.listdir(save)):
+        img_name = f'{save}/{image_names[st.session_state.count]}.jpg'
+        img_name_2 = cv2.imread(img_name)
+        st.image(img_name_2)
+        st.caption(f'image {st.session_state.count}')
+        curr = st.session_state.count
+
+    else:
+        st.session_state.count=0
+
+if chosen == 'save_seg':
+    if prev_img and st.session_state.count > 0:
+        img_name = f'{save_seg}/{str(image_names[st.session_state.count])}.jpg'
+        img_name_2 = cv2.imread(img_name)
+        st.image(img_name_2)
+        st.caption(f'image {st.session_state.count}')
+        curr = st.session_state.count
+
+    elif next_img and st.session_state.count <= len(os.listdir(save_seg)):
+        img_name = f'{save_seg}/{image_names[st.session_state.count]}.jpg'
+        img_name_2 = cv2.imread(img_name)
+        st.image(img_name_2)
+        st.caption(f'image {st.session_state.count}')
+        curr = st.session_state.count
+
+    else:
+        st.session_state.count=0
