@@ -13,6 +13,7 @@ def image_overlay(img1, img2, location):
     img1[y:y+h2, x:x+w2] = img2
     return img1
 
+st.markdown('---')
 kpi1, kpi2 = st.columns(2)
 with kpi1:
     backgrd_img = st.text_input("Insert background image", './images/demo/og_demo_1.jpg')
@@ -21,11 +22,18 @@ with kpi1:
     img_dims = read.shape
     max_height = img_dims[0]
     max_width = img_dims[1]
-    xlocation = st.number_input("Insert top left x coordinates", min_value=0, max_value=max_width, value=100, step=10)
+    
 
 with kpi2:
     overlaying_img = st.text_input("Insert overlaying image", "./images/demo/og_demo_3.jpg")
     st.image(overlaying_img)
+
+st.markdown('---')
+kpi3, kpi4 = st.columns(2)
+with kpi3:
+    xlocation = st.number_input("Insert top left x coordinates", min_value=0, max_value=max_width, value=100, step=10)
+
+with kpi4:
     ylocation = st.number_input("Insert top left y coordinates", min_value=0, max_value=max_height, value=100, step=10)
 
 if 'count' not in st.session_state:
